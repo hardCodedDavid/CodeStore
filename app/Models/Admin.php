@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use App\Exceptions\CustomException;
-use App\Notifications\EmailVerificationNotification;
 use App\Notifications\PasswordResetNotification;
 use App\Traits\UUID;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -14,7 +12,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail
+class Admin extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, UUID, SoftDeletes;
 
@@ -41,7 +39,6 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $hidden = [
         'password',
-        'remember_token',
         'otp',
         'otp_expiry',
     ];
@@ -52,20 +49,10 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
         'otp_expiry' => 'datetime',
-        'period_date' => 'datetime',
-        'period_experience' => 'json',
         'password' => 'hashed',
         'otp' => 'hashed',
     ];
-
-    public function sendEmailVerificationNotification()
-    {
-        $token = rand(0000, 9999);
-        $this->update(['otp' => Hash::make($token), 'otp_expiry' => now()->addMinutes(10)]);
-        $this->notify(new EmailVerificationNotification($token));
-    }
 
     public function sendPasswordResetNotification($token)
     {
