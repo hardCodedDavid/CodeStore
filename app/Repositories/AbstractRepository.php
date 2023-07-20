@@ -2,8 +2,9 @@
 
 namespace App\Repositories;
 
-use App\Contracts\Repositories\AbstractRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+use App\Contracts\Repositories\AbstractRepositoryInterface;
 
 abstract class AbstractRepository implements AbstractRepositoryInterface
 {
@@ -12,6 +13,104 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     }
 
     public abstract function model();
+
+    /**
+     * Gets all model
+     *
+     * @param array $conditions
+     * @param array $columns
+     * @param string $order
+     * @param string $dir
+     * @param string|int $page
+     * @param int $per_page
+     * @return Collection|array
+     */
+
+     public function getAll(
+        array $conditions = [],
+        array $columns = ['*'],
+        string $order = 'created_at',
+        string $dir = 'desc',
+        string|int $page = '*',
+        int $per_page = 50
+    ): Collection|array {
+        $query = $this->model->query()->where($conditions)->orderBy($order, $dir);
+        if ($page == '*') return $query->get($columns);
+        return [
+            'total' => $query->count(),
+            'data' => $query->offset(($page - 1) * $per_page)->limit($per_page)->get($columns)
+        ];
+    }
+
+     /**
+     * search model
+     *
+     * @param string $term
+     * @param array $searchColumns
+     * @param string[][] $relations
+     * @param string|int $page
+     * @param int $per_page
+     * @param array $conditions
+     * @param array $columns
+     * @param string $order
+     * @param string $dir
+     * @return Collection|array
+     */
+    public function search(
+        ?string $term = '',
+        array $searchColumns = [],
+        array $relations = [],
+        string|int $page = '*',
+        int $per_page = 50,
+        array $conditions = [],
+        array $columns = ['*'],
+        string $order = 'created_at',
+        string $dir = 'desc',
+    ): Collection|array {
+        if (!$term) {
+            if ($page == '*') return [];
+            return ['total' => 0, 'items' => []];
+        }
+
+        $query = $this->model->query()->where(function ($query) use ($term, $searchColumns, $relations, $conditions) {
+            $query->where($conditions);
+
+            if (count($relations) > 0) {
+                $i = 0;
+                foreach ($relations as $relation => $columnArray) {
+                    if ($i == 0)
+                        $query->whereHas($relation, function ($q) use ($columnArray, $term) {
+                            foreach ($columnArray as $key => $column) {
+                                if ($key == 0)
+                                    $q->where("$column", 'LIKE', "%$term%");
+                                else
+                                    $q->orWhere("$column", 'LIKE', "%$term%");
+                            }
+                        });
+                    else
+                        $query->orWhereHas($relation, function ($q) use ($columnArray, $term) {
+                            foreach ($columnArray as $key => $column) {
+                                if ($key == 0)
+                                    $q->where("$column", 'LIKE', "%$term%");
+                                else
+                                    $q->orWhere("$column", 'LIKE', "%$term%");
+                            }
+                        });
+                    $i++;
+                }
+            }
+
+            foreach ($searchColumns as $column)
+                $query->orWhere("$column", 'LIKE', "%$term%");
+        });
+
+        if ($page == '*') return $query->orderBy($order, $dir)->get($columns);
+
+        return [
+            'total' => $query->count(),
+            'items' => $query->orderBy($order, $dir)->offset(($page - 1) * $per_page)->limit($per_page)->get($columns)
+        ];
+    }
 
     /**
      * @param string $column
@@ -52,4 +151,6 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     {
         return $model->delete();
     }
+
+    
 }
