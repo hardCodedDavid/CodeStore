@@ -123,6 +123,18 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
     }
 
     /**
+     * Find a model by ID
+     *
+     * @param integer $id
+     * @param array $columns
+     * @return object|null
+     */
+    public function find(int $id, array $columns = ['*']): object|null
+    {
+        return $this->model->query()->find($id, $columns);
+    }
+
+    /**
      * @param array $data
      * @return Model
      */

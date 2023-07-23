@@ -30,7 +30,7 @@ return new class extends Migration
         $data = [
             'firstname' => 'Super',
             'lastname' => 'Admin',
-            'email' => 'admin@naira4dollar.com',
+            'email' => 'admin@ecommerce.com',
             'password' => bcrypt('password'),
         ];
         (new Admin($data))->save();

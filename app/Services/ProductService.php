@@ -31,4 +31,38 @@ class ProductService
             ]
         ];
     }
+
+    public function addProduct(array $data): object
+    {
+        $data = request()->only('name', 'description', 'full_description', 'buy_price', 'sell_price', 'discount', 'sku', 'weight', 'note');
+        $data['code'] = Product::getCode();
+        $data['in_stock'] = request('in_stock') == 'instock';
+        $data['is_listed'] = request('feature') == 'feature';
+        $data['created_by'] = auth('admin')->id();
+
+        $product = $this->repository->create($data);
+        return $this->repository->find($product['id']);
+    }
+
+    public function editProduct(Product $product, array $data): object
+    {
+        $data = request()->only('name', 'description', 'full_description', 'buy_price', 'sell_price', 'discount', 'sku', 'weight', 'note');
+        
+        $data['in_stock'] = request('in_stock') == 'instock';
+        $data['is_listed'] = request('feature') == 'feature';
+        if (!$product['updated_by']) {
+            $data['updated_by'] = auth('admin')->id();
+            $data['updated_date'] = now();
+        }
+        $data['last_updated_by'] = auth('admin')->id();
+
+        $item = $this->repository->update($product, $data);
+
+        return $this->repository->find($item['id']);
+    }
+
+    public function deleteProduct(Product $product): bool
+    {
+        return $this->repository->destroy($product);
+    }
 }

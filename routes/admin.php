@@ -32,10 +32,9 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-
     Route::get('products', [ProductController::class, 'index']);
-    // Route::get('products/{id}', [ProductController::class, 'show']);
-    // Route::post('products', [ProductController::class, 'store']);
-    // Route::put('products/{id}', [ProductController::class, 'update']);
-    // Route::delete('products/{id}', [ProductController::class, 'destroy']);
+    Route::get('products/{product:code}', [ProductController::class, 'show']);
+    Route::post('products', [ProductController::class, 'store']);
+    Route::post('products/{product:code}', [ProductController::class, 'update']);
+    Route::delete('products/{product:code}', [ProductController::class, 'destroy']);
 });
