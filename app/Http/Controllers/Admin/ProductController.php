@@ -8,6 +8,7 @@ use App\Services\ProductService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
+use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
 
@@ -34,6 +35,8 @@ class ProductController extends Controller
 
     public function show(Product $product): JsonResponse
     {
+        $product = $this->service->showProduct($product);
+
         return $this->success(message: 'Product fetched successfully', data: compact('product'));
     }
 

@@ -32,7 +32,7 @@ class StoreRequest extends FormRequest
             // 'quantity' => ['required', 'numeric'],
             // 'item_number' => ['required', 'unique:products,item_number'],
             'weight' => ['numeric'],
-            // 'categories' => ['required', 'array'],
+            'categories' => ['required', 'array'],
             // 'media' => ['required', 'array', 'max:5'],
             // 'media.*' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];

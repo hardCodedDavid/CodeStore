@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
 
@@ -37,4 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('products', [ProductController::class, 'store']);
     Route::post('products/{product:code}', [ProductController::class, 'update']);
     Route::delete('products/{product:code}', [ProductController::class, 'destroy']);
+
+    Route::get('category', [CategoryController::class, 'index']);
+    Route::post('category', [CategoryController::class, 'store']);
+    Route::post('category/{category:id}', [CategoryController::class, 'update']);
+    Route::delete('category/{category:id}', [CategoryController::class, 'destroy']);
 });

@@ -37,8 +37,13 @@ abstract class AbstractRepository implements AbstractRepositoryInterface
         $query = $this->model->query()->where($conditions)->orderBy($order, $dir);
         if ($page == '*') return $query->get($columns);
         return [
-            'total' => $query->count(),
-            'data' => $query->offset(($page - 1) * $per_page)->limit($per_page)->get($columns)
+            // 'total' => $query->count(),
+            'data' => $query->offset(($page - 1) * $per_page)->limit($per_page)->get($columns),
+            'meta' => [
+                        'page' => get_page(),
+                        'per_page' => get_per_page(),
+                        'total' => $query->count()
+                    ]
         ];
     }
 
