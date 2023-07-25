@@ -33,6 +33,7 @@ class UpdateRequest extends FormRequest
             // 'item_number' => ['required', 'unique:products,item_number'],
             'weight' => ['numeric'],
             'categories' => ['required', 'array'],
+            'brands' => ['required', 'numeric'],
             // 'media' => ['required', 'array', 'max:5'],
             // 'media.*' => ['file', 'mimes:jpg,jpeg,png', 'max:2048'],
         ];

@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Repositories\ProductRepository;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -23,7 +25,7 @@ class ProductService
     {
         // $product = $this->repository->getAll(page: get_page(), per_page: get_per_page());
 
-        $product = QueryBuilder::for(Product::class)->allowedIncludes(['categories', 'categories.subcategories'])->paginate(20);
+        $product = QueryBuilder::for(Product::class)->allowedIncludes(['media', 'categories', 'categories.subcategories', 'categories.banners'])->paginate(20);
                     
         return $product;
     }
@@ -40,12 +42,27 @@ class ProductService
 
         $product->categories()->attach(request('categories'));
 
+        $product->brands()->attach(request('brands'));
+
+        $product->variationItems()->attach(request('variations'));
+
+        foreach (request('media') as $key=>$file){
+            $path = self::saveFileAndReturnPath($file, $product['code'].$key);
+            $product->media()->create(['url' => $path]);
+        }
+
         return $this->repository->find($product['id']);
     }
 
     public function showProduct(Product $product) : object 
     {
         $product->load('categories');
+
+        $product->load('brands');
+
+        $product->load('variationItems');
+
+        $product->load('media');
         
         return $product;
     }
@@ -66,9 +83,31 @@ class ProductService
 
         $item->categories()->sync(request('categories'));
 
+        $product->brands()->sync(request('brands'));
+
+        $product->variationItems()->sync(request('variations'));
+
+        if (request('media')){
+            foreach (request('media') as $key=>$file){
+                $path = self::saveFileAndReturnPath($file, $product['code'].$key);
+                $product->media()->create(['url' => $path]);
+            }
+        }
+
 
         return $this->repository->find($item['id']);
     }
+
+    public static function saveFileAndReturnPath($file, $code): string
+    {
+        $destination = 'media';
+        $transferFile = $code.'-'.time().'.'.$file->getClientOriginalExtension();
+        if (!file_exists($destination)) File::makeDirectory($destination);
+        $image = Image::make($file);
+        $image->save($destination . '/' . $transferFile, 60);
+        return $destination . '/' . $transferFile;
+    }
+
 
     public function deleteProduct(Product $product): bool
     {

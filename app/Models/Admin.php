@@ -2,19 +2,20 @@
 
 namespace App\Models;
 
-use App\Exceptions\CustomException;
-use App\Notifications\PasswordResetNotification;
 use App\Traits\UUID;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
+use App\Exceptions\CustomException;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Notifications\PasswordResetNotification;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, UUID, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, UUID, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.

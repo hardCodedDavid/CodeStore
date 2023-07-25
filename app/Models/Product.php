@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -23,6 +24,21 @@ class Product extends Model
         return $this->belongsToMany(SubCategory::class);
     }
 
+    public function brands(): BelongsToMany
+    {
+        return $this->belongsToMany(Brand::class);
+    }
+
+    public function variationItems(): BelongsToMany
+    {
+        return $this->belongsToMany(VariationItem::class);
+    }
+
+    public function media(): HasMany
+    {
+        return $this->hasMany(Media::class);
+    }
+    
     public static function getCode(): string
     {
         $last_item = static::query()->latest()->first();

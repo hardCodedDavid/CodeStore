@@ -42,6 +42,7 @@ return array(
     'Symfony\\Component\\Console\\' => array($vendorDir . '/symfony/console'),
     'Spatie\\QueryBuilder\\Database\\Factories\\' => array($vendorDir . '/spatie/laravel-query-builder/database/factories'),
     'Spatie\\QueryBuilder\\' => array($vendorDir . '/spatie/laravel-query-builder/src'),
+    'Spatie\\Permission\\' => array($vendorDir . '/spatie/laravel-permission/src'),
     'Spatie\\LaravelPackageTools\\' => array($vendorDir . '/spatie/laravel-package-tools/src'),
     'Spatie\\LaravelIgnition\\' => array($vendorDir . '/spatie/laravel-ignition/src'),
     'Spatie\\Ignition\\' => array($vendorDir . '/spatie/ignition/src'),

@@ -41,9 +41,19 @@ return [
             'provider' => 'users',
         ],
 
-        'admin' => [
+        'admins' => [
             'driver' => 'session',
             'provider' => 'admins',
+        ],
+
+        'admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'admins',
+        ],
+
+        'api' => [
+            'driver' => 'sanctum',
+            'provider' => 'users',
         ],
     ],
 
