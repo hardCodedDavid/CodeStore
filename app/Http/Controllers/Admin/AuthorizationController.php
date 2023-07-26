@@ -32,7 +32,7 @@ class AuthorizationController extends Controller
 
     public function update(Role $role, PermissionRequest $request): JsonResponse
     {
-        // $role = $this->service->editPermissions($role, $request->validated());
+        $role = $this->service->editPermissions($role, $request->validated());
 
         return $this->success(message: 'Data updated successfully', data: compact('role'));
     }
@@ -43,7 +43,7 @@ class AuthorizationController extends Controller
 
         // Check if role has users
         if ($role->users()->count() > 0){
-            return $this->failure('An error occured!!', details: 'Can\'t delete brand, associated products found');
+            return $this->failure('An error occured!!', details: 'Can\'t delete role, administrators associated');
         }
         // remove all permissions
         $role->syncPermissions([]);

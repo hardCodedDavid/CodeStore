@@ -1,10 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\VariationController;
 use App\Http\Controllers\Admin\AuthorizationController;
@@ -65,6 +69,23 @@ Route::middleware('auth:admin')->group(function () {
 
     Route::get('authorizations', [AuthorizationController::class, 'index']);
     Route::post('authorization', [AuthorizationController::class, 'store']);
-    Route::post('authorization/{authorization:id}', [AuthorizationController::class, 'update']);
-    Route::delete('authorization/{authorization:id}', [AuthorizationController::class, 'destroy']);
+    Route::post('authorization/{role}', [AuthorizationController::class, 'update']);
+    Route::delete('authorization/{role}', [AuthorizationController::class, 'destroy']);
+
+    Route::get('admins', [AdminController::class, 'index']);
+    Route::post('admin', [AdminController::class, 'store']);
+    Route::post('admin/{admin:id}', [AdminController::class, 'update']);
+    Route::delete('admin/{admin:id}', [AdminController::class, 'destroy']);
+
+    Route::get('reviews', [ReviewController::class, 'index']);
+    Route::post('review/{review:id}/{action}', [ReviewController::class, 'action']);
+
+    Route::get('suppliers', [SupplierController::class, 'index']);
+    Route::post('supplier', [SupplierController::class, 'store']);
+    Route::post('supplier/{supplier}', [SupplierController::class, 'update']);
+    Route::delete('supplier/{supplier}', [SupplierController::class, 'destroy']);
+
+    Route::get('users', [UserController::class, 'index']);
+    Route::get('user/{user}', [UserController::class, 'show']);
+    Route::post('user/{user}', [UserController::class, 'action']);
 });

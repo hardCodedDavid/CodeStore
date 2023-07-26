@@ -44,7 +44,6 @@ class AuthorizationService
         // Check if role has users
         if ($role->users()->count() > 0){
             return false;
-            // return back()->with('error', 'Can\'t delete role, administrators associated');
         }
         // remove all permissions
         $role->syncPermissions([]);
