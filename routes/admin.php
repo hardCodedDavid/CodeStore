@@ -1,16 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\VariationController;
+use App\Http\Controllers\Admin\TransactionController;
 use App\Http\Controllers\Admin\AuthorizationController;
 use App\Http\Controllers\Admin\Auth\PasswordResetController;
 
@@ -41,6 +44,8 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:admin')->group(function () {
+    Route::get('/dashboard', [HomeController::class, 'index']);
+
     Route::get('products', [ProductController::class, 'index']);
     Route::get('products/{product:code}', [ProductController::class, 'show']);
     Route::post('products', [ProductController::class, 'store']);
@@ -88,4 +93,29 @@ Route::middleware('auth:admin')->group(function () {
     Route::get('users', [UserController::class, 'index']);
     Route::get('user/{user}', [UserController::class, 'show']);
     Route::post('user/{user}', [UserController::class, 'action']);
+
+    Route::get('/transactions/purchases/{purchase:code}/invoice', [TransactionController::class, 'puchaseInvoice']);
+    Route::post('/transactions/purchases', [TransactionController::class, 'storePurchase']);
+    Route::post('/transactions/purchase/{purchase:id}', [TransactionController::class, 'updatePurchase']);
+    Route::delete('/transactions/purchase/{purchase:id}', [TransactionController::class, 'destroyPurchase']);
+    Route::put('/sales/item-number/{id}/update', [TransactionController::class, 'removeItemNumber']);
+    Route::delete('/item-number/{id}/delete', [TransactionController::class, 'deleteItemNumber']);
+
+    Route::get('/transactions/sale/{sale:code}/invoice', [TransactionController::class, 'saleInvoice']);
+    Route::post('/transactions/sales', [TransactionController::class, 'storeSale']);
+    Route::post('/transactions/sale/{sale:id}', [TransactionController::class, 'updateSale']);
+    Route::delete('/transactions/sale/{sale:id}', [TransactionController::class, 'destroySale']);
+
+    Route::post('/users/export/download', [ExportController::class, 'exportUsers']);
+    Route::post('/products/export/download', [ExportController::class, 'exportProducts'])->middleware('permission:Export Products');
+    Route::post('/purchases/export/download', [ExportController::class, 'exportPurchases'])->middleware('permission:Export Purchases');
+    Route::post('/sales/export/download', [ExportController::class, 'exportSales'])->middleware('permission:Export Sales');
+
+    Route::post('/settings/business/update', [HomeController::class, 'updateBusiness']);
+    Route::post('/settings/location/update', [HomeController::class, 'updateLocation']);
+    Route::post('/settings/bank/update', [HomeController::class, 'updateBank']);
+
+    Route::post('/profile/update', [HomeController::class, 'updateProfile']);
+    Route::post('/password/custom/change', [HomeController::class, 'changePassword']);
+    Route::get('/{type}/{code}/invoice/send', [HomeController::class, 'sendInvoiceLinkToMail']);
 });

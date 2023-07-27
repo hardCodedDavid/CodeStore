@@ -38,6 +38,16 @@ class Product extends Model
     {
         return $this->hasMany(Media::class);
     }
+
+    public function saleItems(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
+    }
+
+    public function itemNumbers(): HasMany
+    {
+        return $this->hasMany(ItemNumber::class);
+    }
     
     public static function getCode(): string
     {

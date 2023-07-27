@@ -11,6 +11,8 @@ use App\Http\Requests\ProductRequest;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Requests\Product\StoreRequest;
 use App\Http\Requests\Product\UpdateRequest;
+use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -52,5 +54,28 @@ class ProductController extends Controller
         $this->service->deleteProduct($product);
 
         return $this->success('Product deleted successfully');
+    }
+
+    public static function saveFileAndReturnPath($file, $code): string
+    {
+        $destination = 'media';
+        $transferFile = $code.'-'.time().'.'.$file->getClientOriginalExtension();
+        if (!file_exists($destination)) File::makeDirectory($destination);
+        $image = Image::make($file);
+        $image->save($destination . '/' . $transferFile, 60);
+        return $destination . '/' . $transferFile;
+    }
+
+    public static function resizeImageAndReturnPath($file, $code, $width, $height = null, $destination = 'media'): string
+    {
+        $transferFile = $code.'-'.time().'.'.$file->getClientOriginalExtension();
+        if (!file_exists($destination)) mkdir($destination, 666, true);
+        $imgFile = Image::make($file->getRealPath());
+
+        $imgFile->resize($width, $height, function ($constraint) {
+            $constraint->aspectRatio();
+        })->save($destination.'/'.$transferFile);
+
+        return $destination . '/' . $transferFile;
     }
 }

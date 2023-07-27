@@ -12,16 +12,16 @@ class Supplier extends Model
 
     protected $guarded = [];
 
-    // public function purchases(){
-    //     return $this->hasMany(Purchase::class);
-    // }
+    public function purchases(){
+        return $this->hasMany(Purchase::class);
+    }
 
-    // public function getTotalTransactions()
-    // {
-    //     $total = 0;
-    //     foreach ($this->purchases as $purchase) {
-    //         $total += $purchase->getSubTotal();
-    //     }
-    //     return $total;
-    // }
+    public function getTotalTransactions()
+    {
+        $total = 0;
+        foreach ($this->purchases as $purchase) {
+            $total += $purchase->getSubTotal();
+        }
+        return $total;
+    }
 }
